@@ -1,0 +1,58 @@
+body {
+    margin: 15px;
+    background-color: black;
+    color: white;
+}
+header {
+    padding: 10px;
+}
+nav, main {
+    margin: 10px;
+    align-items: stretch;
+    justify-content: center;
+}
+nav p, nav hr {
+    margin: 0px;
+}
+.single-listing-popup {
+    padding: 10px;
+    background: rgb(30, 30, 30);
+    position: absolute;
+    box-shadow: 0 0 15px orange;
+    visibility: hidden;
+    max-width: 50%;
+    max-height: 50%;
+    overflow-y: auto;
+}
+.single-listing:hover .single-listing-popup {
+    visibility: visible;
+}
+.single-listing {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+}
+.single-listing hr {
+    flex-basis: 100%;
+}
+.single-listing h3, .single-listing p, .single-listing a {
+    padding: 0px;
+    margin: 0px;
+}
+.single-listing ul {
+    padding: 0px;
+    margin: 0px;
+    margin-left: 20px;
+}
+.job-header-logo {
+    flex-basis: 5em;
+}
+.job-header-text {
+    margin: 5px;
+}
+.job-header {
+    display: flex;
+}
+footer {
+    margin: 10px;
+}
