@@ -4,14 +4,8 @@
         <meta charset="utf-8" />
         <title>Job Hub</title>
         <link rel="stylesheet" href="main.css" />
-        <?php
-            function runWithSqlConnection($func) {
-                $conn = mysqli_connect("localhost", "root", "", "ESOF-5334"); // server name, user name, pw, db name
-                $result = $func($conn);
-                $conn->close();
-                return $result;
-            }
-        ?>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>   
     </head>
     <body>
         <div class="container">
@@ -23,103 +17,34 @@
                 <p>3 results</p>
             </nav>
             <main>
-                <?php
-                    function generateHtml($sql_con) {
-                        $template = "
-                            <section class=\"single-listing\">
-                                <hr>
-                                <div class=\"job-header-logo\">
-                                    <img src=\"<LogoUrl />\" width=\"100px\" height=\"100px\">
-                                </div>
-                                <div class=\"job-header-text\">
-                                    <h3><JobTitle /></h3>
-                                    <p><CompanyName /></p>
-                                    <p><JobLocation /></p>
-                                    <a href=\"<ApplyUrl />\">Apply Url</a>
-                                </div>
-                                <section class=\"single-listing-popup\">
-                                    <div class=\"job-header\">
-                                        <div class=\"job-header-logo\">
-                                            <img src=\"<LogoUrl />\" width=\"100px\" height=\"100px\">
-                                        </div>
-                                        <div class=\"job-header-text\">
-                                            <h3><JobTitle /></h3>
-                                            <p><CompanyName /></p>
-                                            <p><JobLocation /></p>
-                                            <a href=\"<ApplyUrl />\">Apply Url</a>
-                                        </div>
-                                    </div>
-                                    <JobDesHtml />
-                                </section>
-                            </section>";
-
-                        $result = $sql_con->query("
-                            SELECT
-                                j.Title AS JobTitle,
-                                j.City AS JobLocation,
-                                j.Apply_Url AS ApplyUrl,
-                                j.Html_Description AS JobDesHtml,
-                                c.Name AS CompanyName,
-                                c.Logo AS LogoUrl
-                            FROM jobs AS j
-                            INNER JOIN companies AS c ON j.Company_ID > 1 and j.Company_ID = c.ID
-                            LIMIT 10;");
-
-                        while ($row = $result->fetch_assoc()) {
-                            $html = str_replace("<LogoUrl />", $row["LogoUrl"], $template);
-                            $html = str_replace("<JobTitle />", $row["JobTitle"], $html);
-                            $html = str_replace("<CompanyName />", $row["CompanyName"], $html);
-                            $html = str_replace("<JobLocation />", $row["JobLocation"], $html);
-                            $html = str_replace("<ApplyUrl />", $row["ApplyUrl"], $html);
-                            $html = str_replace("<JobDesHtml />", $row["JobDesHtml"], $html);
-                            echo $html;
-                        }
-                    }
-
-                    runWithSqlConnection('generateHtml')
-                ?>
-                <!-- <section class="single-listing">
-                    <hr>
-                    <div class="job-header-logo">
-                        <img src="06010-medium.jpg" width="100px" height="100px">
-                    </div>
-                    <div class="job-header-text">
-                        <h3>Job Title</h3>
-                        <p>Company Name</p>
-                        <p>Salary</p>
-                        <p>Location</p>
-                        <a href="#">Email</a>
-                    </div>
-                    <section class="single-listing-popup">
-                        <div class="job-header">
-                            <div class="job-header-logo">
-                                <img src="06010-medium.jpg" width="100px" height="100px">
-                            </div>
-                            <div class="job-header-text">
-                                <h3>Job Title</h3>
-                                <p>Company Name</p>
-                                <p>Salary</p>
-                                <p>Location</p>
-                                <p>Email</p>
-                            </div>
-                        </div>
-                        <h3>Job Requirements</h3>
-                        <ul>
-                            <li>Req I</li>
-                            <li>Req II</li>
-                            <li>Req III</li>
-                        </ul>
-                        <h3>Job Description</h3>
-                        <p>Detail Description</p>
-                        <h3>Benefit Package</h3>
-                        <p>Detail Benefit</p>
-                    </section>
-                </section> -->
+                <div class='anchor'></div>
             </main>
             <footer>
-                <hr />
-                <hr />
+                <img src="huaji.gif" class='center'>
             </footer>
         </div>
+        <script>
+            function load_more(index) {
+                $.ajax({
+                    url: 'loadmore.php?index=' + index,
+                    type: "get",
+                    beforeSend: function (){
+                        $('.ajax-loader').show();
+                    },
+                    success: function (data) {
+                        $(".anchor").append(data);
+                    }
+                });
+                return ++index;
+            }
+
+            var index = load_more(0);
+
+            $(window).scroll(function() {
+                if($(window).scrollTop() + $(window).height() >= $(document).height()) {
+                    index = load_more(index);
+                }
+            });
+        </script>
     </body>
 </html>
