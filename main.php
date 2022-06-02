@@ -19,6 +19,14 @@
                         <label>Must have in title: </label>
                         <input type="text" name="MustHaveInTitle" placeholder="SingleTerm" id="MustHaveInTitle"/>
                     </div>
+                    <div class="RefineRow">
+                        <label>Order By: </label>
+                        <select name="OrderBy" id="OrderBy">
+                            <option selected="selected">Default</option>
+                            <option>Post Date</option>
+                            <option>Expire Date</option>
+                        </select>
+                    </div>
                     <input type="button" name="RefineFormSubmit" Value="GO!" onClick="submitRefine(this.form)" id="RefineFormSubmit"/>
                 </form>
                 <hr>
@@ -34,8 +42,7 @@
         <script>
             var index = 0;
             var mustHaveInTitle = "";
-
-            enterAsClick("MustHaveInTitle", "RefineFormSubmit");
+            var orderBy = "Default"
 
             load_more();
 
@@ -43,36 +50,38 @@
                 if($(window).scrollTop() + $(window).height() >= $(document).height()) {
                     load_more();
                 }
-            }); 
+            });
 
             function nuke_children(id) {
                 children = document.getElementById(id).innerHTML = "";
             }
 
-            function enterAsClick(enterItem, clickItem) {
-                var input = document.getElementById(enterItem);
-
-                input.addEventListener("keypress", function(event) {
-                    if (event.key === "Enter") {
-                        event.preventDefault();
-                        document.getElementById(clickItem).click();
-                    }
-                });
+            function isStringSet(value) {
+                return typeof new_mustHaveInTitle != 'undefined' && new_mustHaveInTitle.length > 0;
             }
 
             function submitRefine(form) {
-                var new_mustHaveInTitle = form.MustHaveInTitle.value;
-                if (typeof new_mustHaveInTitle != 'undefined' && new_mustHaveInTitle.length > 0) {
-                    mustHaveInTitle = new_mustHaveInTitle;
-                    index = 0;
-                    nuke_children('anchor');
-                    load_more();
+                mustHaveInTitle = form.MustHaveInTitle.value;
+                orderBy = form.OrderBy.value;
+
+                index = 0;
+                nuke_children('anchor');
+                load_more();
+            }
+
+            function build_url_vars() {
+                result = `index=${index++}&orderBy=${orderBy}`;
+
+                if (mustHaveInTitle.length > 0) {
+                    result += `&mustHaveInTitle=${mustHaveInTitle}`;
                 }
+
+                return result;
             }
 
             function load_more() {
                 $.ajax({
-                    url: `loadmore.php?index=${index++}&mustHaveInTitle=${mustHaveInTitle}`,
+                    url: `loadmore.php?${build_url_vars()}`,
                     type: "get",
                     beforeSend: function (){
                         $('.ajax-loader').show();
