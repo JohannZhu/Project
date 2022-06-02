@@ -39,7 +39,22 @@
         $load_start = $first_load_size + ($index - 1) * $continue_load_size;
     }
 
-    $result = $sql_con->query("
+    $where_clauses = array();
+
+    $mustHaveInTitle = $_GET['mustHaveInTitle'];
+    if (strlen($mustHaveInTitle) > 0) {
+        foreach (explode(" ", $mustHaveInTitle) as $term) {
+            $where_clauses[] = "j.Title LIKE '%$term%'";
+        }
+    }
+
+    if (count($where_clauses) > 0) {
+        $where_clauses = implode(" AND ", $where_clauses);
+    } else {
+        $where_clauses = "true";
+    }
+
+    $query = "
         SELECT
             j.Title AS JobTitle,
             j.City AS JobLocation,
@@ -49,7 +64,10 @@
             c.Logo AS LogoUrl
         FROM jobs AS j
         INNER JOIN companies AS c ON j.Company_ID > 1 and j.Company_ID = c.ID
-        LIMIT $load_start, $load_size;");
+        WHERE $where_clauses
+        LIMIT $load_start, $load_size;";
+
+    $result = $sql_con->query($query) or die("ERROR\n$sql_con->error\nQuery\n$query");
 
     while ($row = $result->fetch_assoc()) {
         $html = str_replace("<LogoUrl />", $row["LogoUrl"], $template);
