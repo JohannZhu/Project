@@ -29,12 +29,9 @@
             </section>
         </section>";
 
-    $sql_con = mysqli_connect("localhost", "root", "", "ESOF-5334"); // server name, user name, pw, db name
-
     $where_clauses = Sql_Refine();
     $orderBy_clauses = Sql_OrderBy();
     $limit_clauses = Sql_limit();
-
     $query = "
         SELECT
             j.Title AS JobTitle,
@@ -50,10 +47,10 @@
         $where_clauses
         $orderBy_clauses
         $limit_clauses;";
-    
     Write_log("Query:\n$query");
-    $result = $sql_con->query($query) or die("ERROR: $sql_con->error Query: $query");
 
+    $sql_con = mysqli_connect("localhost", "root", "", "ESOF-5334"); // server name, user name, pw, db name
+    $result = $sql_con->query($query) or die("ERROR: $sql_con->error Query: $query");
     while ($row = $result->fetch_assoc()) {
         $html = str_replace("<LogoUrl />", $row["LogoUrl"], $template);
         $html = str_replace("<JobTitle />", $row["JobTitle"], $html);
@@ -64,7 +61,6 @@
         $html = str_replace("<JobDesHtml />", $row["JobDesHtml"], $html);
         echo $html;
     }
-
     $sql_con->close();
 
     function GetCurrentNY() {
