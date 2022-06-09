@@ -4,8 +4,21 @@ body {
     color: white;
 }
 header {
-    padding: 10px;
+    padding: 2px;
+    margin: 1%;
 }
+/*footer {
+    background-color: blue;
+    height: 50px;
+    margin: 1%;
+    padding: 2px;
+}
+#FooterP {
+    margin-left: 45%;
+}
+nav {
+    float: left;
+}*/
 nav, main {
     margin: 10px;
     align-items: stretch;
